@@ -10,7 +10,7 @@ function App() {
     let retries = 5;
     while (retries) {
       try {
-        const response = await fetch("http://trueque_backend:8000/home");
+        const response = await fetch("http://localhost:8000/home");
         const data = await response.json();
         setMessage(data.message);
         break;
