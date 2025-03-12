@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: trueque_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: trueque_db
+      POSTGRES_USER: trueque_user
+      POSTGRES_PASSWORD: trueque_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - trueque-network
+
+  backend:
+    build: ./backend
+    container_name: trueque_backend
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "sleep 10 && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    networks:
+      - trueque-network
+
+volumes:
+  pgdata:
+
+networks:
+  trueque-network:
+    driver: bridge
