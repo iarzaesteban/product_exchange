@@ -33,6 +33,16 @@ services:
     networks:
       - trueque-network
 
+  frontend:
+    build: ./frontend
+    container_name: trueque_frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - trueque-network
+      
 volumes:
   pgdata:
 
